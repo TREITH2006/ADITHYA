@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Discount Surprise!</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(to right, #4facfe, #00f2fe);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .hidden { display: none; }
+    .container { text-align: center; padding: 20px; }
+    input, button {
+      padding: 10px;
+      margin: 10px;
+      border-radius: 10px;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- Page 1 -->
+  <div class="container" id="page1">
+    <h1>Welcome to the Discount Zone! 🎁</h1>
+    <p>Did you know? A crocodile can't stick its tongue out! 🐊</p>
+    <input type="text" id="username" placeholder="Enter your name" />
+    <button onclick="goToPage2()">Next ➡️</button>
+  </div>
+
+  <!-- Page 2 -->
+  <div class="container hidden" id="page2">
+    <h2>Hello <span id="userDisplay"></span>! Enter up to 20 item amounts 💸</h2>
+    <input type="number" id="amountInput" placeholder="Enter amount" />
+    <button onclick="addAmount()">Add Amount ➕</button>
+    <button onclick="goToPage3()">Next ➡️</button>
+    <ul id="amountList"></ul>
+  </div>
+
+  <!-- Page 3: User Enters Discount % -->
+  <div class="container hidden" id="page3">
+    <h2>Nice! Now enter your expected discount percentage 🎯</h2>
+    <input type="number" id="discountInput" placeholder="Enter discount %" />
+    <button onclick="calculateDiscount()">Show Surprise 🎉</button>
+  </div>
+
+  <!-- Result Page Without Animation -->
+  <div class="container hidden" id="resultPage">
+    <h1>🎊 Surprise Time, <span id="nameFinal"></span>! 🎊</h1>
+    <h2>Final Amount after Discount: ₹<span id="finalAmount"></span></h2>
+    <p>You saved <span id="savedAmount"></span> Rupees! 💰</p>
+    <p>Thanks for using our Discount Calculator, <span id="thanksUser"></span>! 🎊</p>
+  </div>
+
+  <script>
+    let amounts = [];
+
+    function goToPage2() {
+      const name = document.getElementById('username').value;
+      if (!name) return alert('Please enter your name!');
+      document.getElementById('userDisplay').textContent = name;
+      document.getElementById('nameFinal').textContent = name;
+      document.getElementById('thanksUser').textContent = name;
+      document.getElementById('page1').classList.add('hidden');
+      document.getElementById('page2').classList.remove('hidden');
+    }
+
+    function addAmount() {
+      const input = document.getElementById('amountInput');
+      const value = parseFloat(input.value);
+      if (!isNaN(value) && value > 0 && amounts.length < 20) {
+        amounts.push(value);
+        document.getElementById('amountList').innerHTML += `<li>₹${value}</li>`;
+        input.value = '';
+      } else {
+        alert('Please enter a valid amount (max 20 items).');
+      }
+    }
+
+    function goToPage3() {
+      if (amounts.length === 0) return alert('Add at least one amount!');
+      document.getElementById('page2').classList.add('hidden');
+      document.getElementById('page3').classList.remove('hidden');
+    }
+
+    function calculateDiscount() {
+      const discountValue = parseFloat(document.getElementById('discountInput').value);
+      if (isNaN(discountValue) || discountValue <= 0 || discountValue > 100) {
+        return alert('Please enter a valid discount percentage (1-100).');
+      }
+
+      const total = amounts.reduce((a, b) => a + b, 0);
+      const discountAmount = total * (discountValue / 100);
+      const finalAmount = total - discountAmount;
+
+      document.getElementById('finalAmount').textContent = finalAmount.toFixed(2);
+      document.getElementById('savedAmount').textContent = discountAmount.toFixed(2);
+
+      document.getElementById('page3').classList.add('hidden');
+      document.getElementById('resultPage').classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
